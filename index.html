@@ -8,7 +8,19 @@
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="stylesheet" href="styles.css">
 </head>
-<body>
+<body class="auth-locked">
+  <section id="loginOverlay" class="login-overlay">
+    <form id="loginForm" class="login-card" autocomplete="on">
+      <p class="eyebrow">Private Training Zone</p>
+      <h1>Login</h1>
+      <p>Einloggen, dann Training starten.</p>
+      <label>User<input id="loginUser" autocomplete="username" placeholder="User" required></label>
+      <label>Passwort<input id="loginPassword" type="password" autocomplete="current-password" placeholder="Passwort" required></label>
+      <button class="primary-button" type="submit">Einloggen</button>
+      <small id="loginError" class="login-error"></small>
+    </form>
+  </section>
+
   <section id="motivationModal" class="motivation-modal" hidden>
     <article class="motivation-card-large">
       <div id="motivationImage" class="motivation-image"></div>
@@ -26,7 +38,10 @@
       <h1>Flos Fitness</h1>
       <p class="subtitle">Fitness zuerst. Laufen und Fahrrad sauber mitloggen. Progression über dein Hoch-System.</p>
     </div>
-    <button id="installButton" class="soft-button" hidden>App installieren</button>
+    <div class="topbar-actions">
+      <button id="installButton" class="soft-button" hidden>App installieren</button>
+      <button id="logoutButton" class="soft-button">Logout</button>
+    </div>
   </header>
 
   <main class="shell">
@@ -63,7 +78,8 @@
 
   <template id="exerciseTemplate"><article class="exercise-card"><div class="exercise-head"><div class="exercise-image" aria-hidden="true"></div><div><h3></h3><p class="exercise-meta"></p></div></div><div class="progression-box"></div><div class="sets"></div><div class="card-actions"><button class="timer-button soft-button">90s</button><button class="hoch-button soft-button">hoch!</button><button class="done-button primary-button">Übung loggen</button></div></article></template>
 
-  <script src="app.js?v=8" defer></script>
-  <script src="fix.js?v=8" defer></script>
+  <script src="auth.js?v=9" defer></script>
+  <script src="app.js?v=9" defer></script>
+  <script src="fix.js?v=9" defer></script>
 </body>
 </html>
