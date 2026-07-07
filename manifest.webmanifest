@@ -1,0 +1,19 @@
+{
+  "name": "Flos Fitness",
+  "short_name": "Fitness",
+  "description": "Privates Trainingstagebuch für Workouts, Übungen und Fortschritt.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#111827",
+  "lang": "de",
+  "icons": [
+    {
+      "src": "icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
