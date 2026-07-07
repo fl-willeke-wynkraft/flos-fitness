@@ -9,6 +9,17 @@
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+  <section id="motivationModal" class="motivation-modal" hidden>
+    <article class="motivation-card-large">
+      <div id="motivationImage" class="motivation-image"></div>
+      <div class="motivation-copy">
+        <p class="eyebrow">Heute</p>
+        <h2 id="motivationQuote">Comfort never made history.</h2>
+        <button id="startTraining" class="primary-button">Training starten</button>
+      </div>
+    </article>
+  </section>
+
   <header class="topbar">
     <div>
       <p class="eyebrow">Flos Trainingstagebuch</p>
@@ -19,127 +30,39 @@
   </header>
 
   <main class="shell">
+    <section class="daily-boost">
+      <div id="dailyBoostImage" class="daily-boost-image"></div>
+      <div>
+        <p class="eyebrow">Motivation</p>
+        <h2 id="dailyBoostText">Get up bro, it's time to show them your prime.</h2>
+      </div>
+    </section>
+
     <section class="mode-grid" aria-label="Trainingsart auswählen">
-      <button class="mode-card active" data-mode="fitness">
-        <span class="mode-visual">🏋️</span>
-        <strong>Fitness</strong>
-        <small>Übungen, Sätze, Timer, Progression</small>
-      </button>
-      <button class="mode-card" data-mode="run">
-        <span class="mode-visual">🏃</span>
-        <strong>Laufen</strong>
-        <small>Zone 2, Distanz, Pace, Puls</small>
-      </button>
-      <button class="mode-card" data-mode="bike">
-        <span class="mode-visual">🚴</span>
-        <strong>Fahrrad</strong>
-        <small>Gym-Bike, Zeit, Speed, Distanz</small>
-      </button>
+      <button class="mode-card active" data-mode="fitness"><span class="mode-visual">🏋️</span><strong>Fitness</strong><small>Übungen, Sätze, Timer, Progression</small></button>
+      <button class="mode-card" data-mode="run"><span class="mode-visual">🏃</span><strong>Laufen</strong><small>Zone 2, Distanz, Pace, Puls</small></button>
+      <button class="mode-card" data-mode="bike"><span class="mode-visual">🚴</span><strong>Fahrrad</strong><small>Gym-Bike, Zeit, Speed, Distanz</small></button>
     </section>
 
     <section class="dashboard-grid">
-      <article class="metric-card">
-        <span id="trainingCount">0</span>
-        <small>Logs gesamt</small>
-      </article>
-      <article class="metric-card">
-        <span id="strengthGain">0%</span>
-        <small>Kraftzuwachs Ø</small>
-      </article>
-      <article class="metric-card">
-        <span id="readyToIncrease">0</span>
-        <small>Übungen bereit für hoch</small>
-      </article>
-      <article class="metric-card timer-card">
-        <span id="globalTimer">90</span>
-        <small>Sekunden Pause</small>
-        <button id="globalTimerButton" class="primary-button small">90s starten</button>
-      </article>
+      <article class="metric-card"><span id="trainingCount">0</span><small>Logs gesamt</small></article>
+      <article class="metric-card"><span id="strengthGain">0%</span><small>Kraftzuwachs Ø</small></article>
+      <article class="metric-card"><span id="readyToIncrease">0</span><small>Übungen bereit für hoch</small></article>
+      <article class="metric-card timer-card"><span id="globalTimer">90</span><small>Sekunden Pause</small><button id="globalTimerButton" class="primary-button small">90s starten</button></article>
     </section>
 
     <section id="fitnessView" class="view active-view">
-      <div class="section-heading">
-        <div>
-          <p class="eyebrow">Heute</p>
-          <h2>Fitness-Training</h2>
-        </div>
-        <button id="finishWorkout" class="primary-button">Workout speichern</button>
-      </div>
+      <div class="section-heading"><div><p class="eyebrow">Heute</p><h2>Fitness-Training</h2></div><button id="finishWorkout" class="primary-button">Workout speichern</button></div>
       <div id="exerciseCards" class="exercise-grid"></div>
     </section>
 
-    <section id="runView" class="view">
-      <div class="section-heading">
-        <div>
-          <p class="eyebrow">Cardio</p>
-          <h2>Laufen loggen</h2>
-        </div>
-      </div>
-      <form id="runForm" class="log-form">
-        <label>Datum<input id="runDate" type="date"></label>
-        <label>Typ<input id="runType" type="text" value="Zone 2"></label>
-        <label>Distanz km<input id="runDistance" type="number" step="0.01" placeholder="4.1"></label>
-        <label>Zeit min<input id="runMinutes" type="number" step="1" placeholder="34"></label>
-        <label>Puls Ø<input id="runPulse" type="number" step="1" placeholder="154"></label>
-        <label>Notiz<input id="runNote" type="text" placeholder="locker, schwer, Beine müde ..."></label>
-        <button class="primary-button" type="submit">Lauf speichern</button>
-      </form>
-    </section>
-
-    <section id="bikeView" class="view">
-      <div class="section-heading">
-        <div>
-          <p class="eyebrow">Cardio</p>
-          <h2>Fahrrad loggen</h2>
-        </div>
-      </div>
-      <form id="bikeForm" class="log-form">
-        <label>Datum<input id="bikeDate" type="date"></label>
-        <label>Ort<input id="bikeType" type="text" value="Gym-Bike"></label>
-        <label>Distanz km<input id="bikeDistance" type="number" step="0.01" placeholder="20"></label>
-        <label>Zeit min<input id="bikeMinutes" type="number" step="1" placeholder="37"></label>
-        <label>Speed km/h<input id="bikeSpeed" type="number" step="0.1" placeholder="32.3"></label>
-        <label>Notiz<input id="bikeNote" type="text" placeholder="Intervall, locker, schwer ..."></label>
-        <button class="primary-button" type="submit">Fahrrad speichern</button>
-      </form>
-    </section>
-
-    <section class="history-panel">
-      <div class="section-heading">
-        <div>
-          <p class="eyebrow">Auswertung</p>
-          <h2>Logs & Fortschritt</h2>
-        </div>
-        <div class="actions">
-          <button id="exportJson" class="soft-button">Export</button>
-          <label class="soft-button file-button">Import<input id="importJson" type="file" accept="application/json"></label>
-          <button id="resetData" class="danger-button">Reset</button>
-        </div>
-      </div>
-      <div id="insights" class="insight-grid"></div>
-      <div id="logList" class="log-list"></div>
-    </section>
+    <section id="runView" class="view"><div class="section-heading"><div><p class="eyebrow">Cardio</p><h2>Laufen loggen</h2></div></div><form id="runForm" class="log-form"><label>Datum<input id="runDate" type="date"></label><label>Typ<input id="runType" type="text" value="Zone 2"></label><label>Distanz km<input id="runDistance" type="number" step="0.01" placeholder="4.1"></label><label>Zeit min<input id="runMinutes" type="number" step="1" placeholder="34"></label><label>Puls Ø<input id="runPulse" type="number" step="1" placeholder="154"></label><label>Notiz<input id="runNote" type="text" placeholder="locker, schwer, Beine müde ..."></label><button class="primary-button" type="submit">Lauf speichern</button></form></section>
+    <section id="bikeView" class="view"><div class="section-heading"><div><p class="eyebrow">Cardio</p><h2>Fahrrad loggen</h2></div></div><form id="bikeForm" class="log-form"><label>Datum<input id="bikeDate" type="date"></label><label>Ort<input id="bikeType" type="text" value="Gym-Bike"></label><label>Distanz km<input id="bikeDistance" type="number" step="0.01" placeholder="20"></label><label>Zeit min<input id="bikeMinutes" type="number" step="1" placeholder="37"></label><label>Speed km/h<input id="bikeSpeed" type="number" step="0.1" placeholder="32.3"></label><label>Notiz<input id="bikeNote" type="text" placeholder="Intervall, locker, schwer ..."></label><button class="primary-button" type="submit">Fahrrad speichern</button></form></section>
+    <section class="history-panel"><div class="section-heading"><div><p class="eyebrow">Auswertung</p><h2>Logs & Fortschritt</h2></div><div class="actions"><button id="exportJson" class="soft-button">Export</button><label class="soft-button file-button">Import<input id="importJson" type="file" accept="application/json"></label><button id="resetData" class="danger-button">Reset</button></div></div><div id="insights" class="insight-grid"></div><div id="logList" class="log-list"></div></section>
   </main>
 
-  <template id="exerciseTemplate">
-    <article class="exercise-card">
-      <div class="exercise-head">
-        <div class="exercise-image" aria-hidden="true"></div>
-        <div>
-          <h3></h3>
-          <p class="exercise-meta"></p>
-        </div>
-      </div>
-      <div class="progression-box"></div>
-      <div class="sets"></div>
-      <div class="card-actions">
-        <button class="timer-button soft-button">90s</button>
-        <button class="hoch-button soft-button">hoch!</button>
-        <button class="done-button primary-button">Übung loggen</button>
-      </div>
-    </article>
-  </template>
+  <template id="exerciseTemplate"><article class="exercise-card"><div class="exercise-head"><div class="exercise-image" aria-hidden="true"></div><div><h3></h3><p class="exercise-meta"></p></div></div><div class="progression-box"></div><div class="sets"></div><div class="card-actions"><button class="timer-button soft-button">90s</button><button class="hoch-button soft-button">hoch!</button><button class="done-button primary-button">Übung loggen</button></div></article></template>
 
-  <script src="app.js" defer></script>
+  <script src="app.js?v=4" defer></script>
 </body>
 </html>
