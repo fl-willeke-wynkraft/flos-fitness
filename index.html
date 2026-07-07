@@ -3,100 +3,140 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#111827">
+  <meta name="theme-color" content="#f8fafc">
   <title>Flos Fitness</title>
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <header class="app-header">
+  <header class="topbar">
     <div>
-      <p class="eyebrow">Privates Trainingstagebuch</p>
+      <p class="eyebrow">Flos Trainingstagebuch</p>
       <h1>Flos Fitness</h1>
-      <p class="subtitle">Plane, protokolliere und analysiere dein Training direkt im Browser.</p>
+      <p class="subtitle">Fitness zuerst. Laufen und Fahrrad sauber mitloggen. Progression über dein Hoch-System.</p>
     </div>
-    <button id="installButton" class="ghost-button" hidden>App installieren</button>
+    <button id="installButton" class="soft-button" hidden>App installieren</button>
   </header>
 
-  <main class="layout">
-    <section class="panel hero-panel">
-      <div>
-        <h2>Heute trainieren</h2>
-        <p id="todaySummary">Noch kein Training für heute gespeichert.</p>
-      </div>
-      <div class="stats-grid" aria-label="Trainingsstatistiken">
-        <article><span id="weekWorkouts">0</span><small>Trainings diese Woche</small></article>
-        <article><span id="totalVolume">0 kg</span><small>Volumen diese Woche</small></article>
-        <article><span id="streakDays">0</span><small>Tage Serie</small></article>
-      </div>
+  <main class="shell">
+    <section class="mode-grid" aria-label="Trainingsart auswählen">
+      <button class="mode-card active" data-mode="fitness">
+        <span class="mode-visual">🏋️</span>
+        <strong>Fitness</strong>
+        <small>Übungen, Sätze, Timer, Progression</small>
+      </button>
+      <button class="mode-card" data-mode="run">
+        <span class="mode-visual">🏃</span>
+        <strong>Laufen</strong>
+        <small>Zone 2, Distanz, Pace, Puls</small>
+      </button>
+      <button class="mode-card" data-mode="bike">
+        <span class="mode-visual">🚴</span>
+        <strong>Fahrrad</strong>
+        <small>Gym-Bike, Zeit, Speed, Distanz</small>
+      </button>
     </section>
 
-    <section class="panel">
-      <div class="section-title">
+    <section class="dashboard-grid">
+      <article class="metric-card">
+        <span id="trainingCount">0</span>
+        <small>Logs gesamt</small>
+      </article>
+      <article class="metric-card">
+        <span id="strengthGain">0%</span>
+        <small>Kraftzuwachs Ø</small>
+      </article>
+      <article class="metric-card">
+        <span id="readyToIncrease">0</span>
+        <small>Übungen bereit für hoch</small>
+      </article>
+      <article class="metric-card timer-card">
+        <span id="globalTimer">90</span>
+        <small>Sekunden Pause</small>
+        <button id="globalTimerButton" class="primary-button small">90s starten</button>
+      </article>
+    </section>
+
+    <section id="fitnessView" class="view active-view">
+      <div class="section-heading">
         <div>
-          <p class="eyebrow">Neues Training</p>
-          <h2>Einheit erfassen</h2>
+          <p class="eyebrow">Heute</p>
+          <h2>Fitness-Training</h2>
         </div>
-        <div class="preset-buttons" aria-label="Trainingsvorlagen">
-          <button type="button" data-preset="Push">Push</button>
-          <button type="button" data-preset="Pull">Pull</button>
-          <button type="button" data-preset="Beine">Beine</button>
-          <button type="button" data-preset="Ganzkörper">Ganzkörper</button>
+        <button id="finishWorkout" class="primary-button">Workout speichern</button>
+      </div>
+      <div id="exerciseCards" class="exercise-grid"></div>
+    </section>
+
+    <section id="runView" class="view">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">Cardio</p>
+          <h2>Laufen loggen</h2>
         </div>
       </div>
-
-      <form id="workoutForm" class="workout-form">
-        <label>Datum<input id="workoutDate" type="date" required></label>
-        <label>Fokus / Name<input id="workoutName" type="text" placeholder="z. B. Push, Laufen, Oberkörper" required></label>
-        <label class="full-width">Übungen und Sätze
-          <textarea id="workoutExercises" rows="8" placeholder="Beispiel:\nBankdrücken: 10x60, 8x65, 6x70\nSchulterdrücken: 10x25, 10x25\nLiegestütze: 20x0, 15x0" required></textarea>
-          <small>Format: Übung: WiederholungenxGewicht, WiederholungenxGewicht. Körpergewicht-Übungen mit 0 kg eintragen.</small>
-        </label>
-        <label class="full-width">Notizen<textarea id="workoutNotes" rows="3" placeholder="Wie lief die Einheit? Energie, Schmerzen, Technik, Stimmung ..."></textarea></label>
-        <div class="form-actions full-width">
-          <button type="submit" class="primary-button">Training speichern</button>
-          <button type="button" id="resetForm" class="ghost-button">Formular leeren</button>
-        </div>
+      <form id="runForm" class="log-form">
+        <label>Datum<input id="runDate" type="date"></label>
+        <label>Typ<input id="runType" type="text" value="Zone 2"></label>
+        <label>Distanz km<input id="runDistance" type="number" step="0.01" placeholder="4.1"></label>
+        <label>Zeit min<input id="runMinutes" type="number" step="1" placeholder="34"></label>
+        <label>Puls Ø<input id="runPulse" type="number" step="1" placeholder="154"></label>
+        <label>Notiz<input id="runNote" type="text" placeholder="locker, schwer, Beine müde ..."></label>
+        <button class="primary-button" type="submit">Lauf speichern</button>
       </form>
     </section>
 
-    <section class="panel split-panel">
-      <div>
-        <div class="section-title compact"><div><p class="eyebrow">Übungen</p><h2>Katalog</h2></div></div>
-        <form id="exerciseForm" class="inline-form">
-          <input id="exerciseName" type="text" placeholder="Neue Übung">
-          <button type="submit">Hinzufügen</button>
-        </form>
-        <div id="exerciseList" class="chip-list"></div>
-      </div>
-
-      <div>
-        <div class="section-title compact"><div><p class="eyebrow">Daten</p><h2>Backup</h2></div></div>
-        <div class="backup-actions">
-          <button type="button" id="exportJson">JSON exportieren</button>
-          <label class="file-button">JSON importieren<input id="importJson" type="file" accept="application/json"></label>
-          <button type="button" id="clearData" class="danger-button">Alles löschen</button>
+    <section id="bikeView" class="view">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">Cardio</p>
+          <h2>Fahrrad loggen</h2>
         </div>
       </div>
+      <form id="bikeForm" class="log-form">
+        <label>Datum<input id="bikeDate" type="date"></label>
+        <label>Ort<input id="bikeType" type="text" value="Gym-Bike"></label>
+        <label>Distanz km<input id="bikeDistance" type="number" step="0.01" placeholder="20"></label>
+        <label>Zeit min<input id="bikeMinutes" type="number" step="1" placeholder="37"></label>
+        <label>Speed km/h<input id="bikeSpeed" type="number" step="0.1" placeholder="32.3"></label>
+        <label>Notiz<input id="bikeNote" type="text" placeholder="Intervall, locker, schwer ..."></label>
+        <button class="primary-button" type="submit">Fahrrad speichern</button>
+      </form>
     </section>
 
-    <section class="panel">
-      <div class="section-title">
-        <div><p class="eyebrow">Verlauf</p><h2>Gespeicherte Trainings</h2></div>
-        <input id="historySearch" class="search-input" type="search" placeholder="Suche nach Übung, Fokus oder Notiz">
+    <section class="history-panel">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">Auswertung</p>
+          <h2>Logs & Fortschritt</h2>
+        </div>
+        <div class="actions">
+          <button id="exportJson" class="soft-button">Export</button>
+          <label class="soft-button file-button">Import<input id="importJson" type="file" accept="application/json"></label>
+          <button id="resetData" class="danger-button">Reset</button>
+        </div>
       </div>
-      <div id="historyList" class="history-list"></div>
+      <div id="insights" class="insight-grid"></div>
+      <div id="logList" class="log-list"></div>
     </section>
   </main>
 
-  <template id="workoutTemplate">
-    <article class="workout-card">
-      <div class="workout-card-header">
-        <div><h3></h3><p></p></div>
-        <button type="button" class="delete-workout" aria-label="Training löschen">Löschen</button>
+  <template id="exerciseTemplate">
+    <article class="exercise-card">
+      <div class="exercise-head">
+        <div class="exercise-image" aria-hidden="true"></div>
+        <div>
+          <h3></h3>
+          <p class="exercise-meta"></p>
+        </div>
       </div>
-      <ul class="exercise-summary"></ul>
-      <p class="notes"></p>
+      <div class="progression-box"></div>
+      <div class="sets"></div>
+      <div class="card-actions">
+        <button class="timer-button soft-button">90s</button>
+        <button class="hoch-button soft-button">hoch!</button>
+        <button class="done-button primary-button">Übung loggen</button>
+      </div>
     </article>
   </template>
 
