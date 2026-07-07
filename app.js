@@ -1,67 +1,98 @@
 (() => {
-  const STORE_KEY = "flos-fitness:data:v1";
-  const defaultExercises = ["Kniebeuge", "Bankdrücken", "Kreuzheben", "Schulterdrücken", "Klimmzüge", "Rudern", "Ausfallschritte", "Plank", "Laufen", "Radfahren"];
+  const STORE_KEY = "flos-fitness:v2";
+  const today = () => new Date().toISOString().slice(0, 10);
 
-  const presets = {
-    Push: ["Bankdrücken: 10x60, 8x65, 6x70", "Schulterdrücken: 10x25, 10x25", "Trizepsdrücken: 12x30, 10x30"].join("\n"),
-    Pull: ["Klimmzüge: 8x0, 6x0, 5x0", "Rudern: 10x45, 10x45, 8x50", "Bizepscurls: 12x12.5, 10x12.5"].join("\n"),
-    Beine: ["Kniebeuge: 10x60, 8x70, 6x80", "Ausfallschritte: 10x20, 10x20", "Wadenheben: 15x40, 15x40"].join("\n"),
-    "Ganzkörper": ["Kniebeuge: 8x60, 8x60", "Bankdrücken: 8x55, 8x55", "Rudern: 10x45, 10x45", "Plank: 60x0, 45x0"].join("\n")
-  };
+  const plan = [
+    { id: "bd", name: "BD", fullName: "Brustdrücken / Bankdrücken", icon: "🏋️", target: "20 kg extra", note: "hoch?", sets: [{ kg: 15, reps: 13 }, { kg: 15, reps: 7 }, { kg: 10, reps: 10 }] },
+    { id: "butterfly", name: "Butterfly", fullName: "Butterfly Maschine", icon: "🦋", target: "107 kg", note: "hoch?", sets: [{ kg: 66, reps: 11 }, { kg: 66, reps: 9 }, { kg: 59, reps: 10 }] },
+    { id: "shoulder", name: "E Schultern", fullName: "Schulterdrücken Maschine", icon: "💪", target: "50 kg", note: "hoch?!!", sets: [{ kg: 18, reps: 16 }, { kg: 23, reps: 12 }, { kg: 23, reps: 11 }] },
+    { id: "side", name: "O Seitheben", fullName: "Seitheben", icon: "🪽", target: "32 kg", note: "", sets: [{ kg: 0, reps: 14 }, { kg: 36, reps: 12 }, { kg: 41, reps: 11 }] },
+    { id: "lat", name: "Lat", fullName: "Latzug", icon: "🔽", target: "66 kg", note: "hoch?", sets: [{ kg: 39, reps: 15 }, { kg: 45, reps: 13 }, { kg: 45, reps: 11 }] },
+    { id: "reverse", name: "Reverse Butterfly", fullName: "Reverse Butterfly", icon: "🧲", target: "45 kg", note: "", sets: [{ kg: 0, reps: 0 }, { kg: 0, reps: 0 }, { kg: 0, reps: 0 }] },
+    { id: "row", name: "Rudern", fullName: "Rudern Maschine", icon: "🚣", target: "73 kg", note: "hoch?", sets: [{ kg: 39, reps: 14 }, { kg: 39, reps: 15 }, { kg: 43, reps: 13 }] },
+    { id: "biceps", name: "Bizeps", fullName: "Bizeps + Stange", icon: "💪", target: "20 kg + Stange", note: "hoch?", coaching: "Runter mit den Armen du Sau!", sets: [{ kg: 10, reps: 10 }, { kg: 10, reps: 12 }, { kg: 10, reps: 5 }] },
+    { id: "cablecurl", name: "O Kabelzug-Bizeps", fullName: "Kabelzug-Bizeps", icon: "🪢", target: "14 kg", note: "hoch?", sets: [{ kg: 14, reps: 12 }, { kg: 14, reps: 11 }, { kg: 14, reps: 10 }] },
+    { id: "triceps", name: "Trizeps", fullName: "Trizepsdrücken", icon: "🔱", target: "45 kg", note: "hoch?", sets: [{ kg: 32, reps: 12 }, { kg: 32, reps: 9 }, { kg: 27, reps: 10 }] },
+    { id: "abs", name: "Bauch", fullName: "Hanging Sit-Ups", icon: "🔥", target: "Körpergewicht", note: "", sets: [{ kg: 0, reps: 14 }, { kg: 0, reps: 16 }, { kg: 0, reps: 0 }] }
+  ];
+
+  const seedLogs = [
+    { id: cryptoId(), type: "run", date: today(), title: "Laufen Zone 2", distance: 4, minutes: 34, note: "Aus deinem bisherigen Plan übernommen." },
+    { id: cryptoId(), type: "run", date: today(), title: "Laufen Zone 2", distance: 4.1, minutes: 26, note: "Aus deinem bisherigen Plan übernommen." },
+    { id: cryptoId(), type: "bike", date: today(), title: "Fahrrad Gym", speed: 32.3, note: "Referenz-Speed aus deinem Plan." }
+  ];
 
   const state = loadState();
+  let activeMode = "fitness";
+  let timerInterval = null;
+  let timerLeft = 90;
+
+  const $ = (selector) => document.querySelector(selector);
+  const $$ = (selector) => Array.from(document.querySelectorAll(selector));
+
   const els = {
-    installButton: document.querySelector("#installButton"),
-    todaySummary: document.querySelector("#todaySummary"),
-    weekWorkouts: document.querySelector("#weekWorkouts"),
-    totalVolume: document.querySelector("#totalVolume"),
-    streakDays: document.querySelector("#streakDays"),
-    workoutForm: document.querySelector("#workoutForm"),
-    workoutDate: document.querySelector("#workoutDate"),
-    workoutName: document.querySelector("#workoutName"),
-    workoutExercises: document.querySelector("#workoutExercises"),
-    workoutNotes: document.querySelector("#workoutNotes"),
-    resetForm: document.querySelector("#resetForm"),
-    exerciseForm: document.querySelector("#exerciseForm"),
-    exerciseName: document.querySelector("#exerciseName"),
-    exerciseList: document.querySelector("#exerciseList"),
-    historySearch: document.querySelector("#historySearch"),
-    historyList: document.querySelector("#historyList"),
-    workoutTemplate: document.querySelector("#workoutTemplate"),
-    exportJson: document.querySelector("#exportJson"),
-    importJson: document.querySelector("#importJson"),
-    clearData: document.querySelector("#clearData")
+    installButton: $("#installButton"),
+    modeCards: $$(".mode-card"),
+    views: { fitness: $("#fitnessView"), run: $("#runView"), bike: $("#bikeView") },
+    exerciseCards: $("#exerciseCards"),
+    finishWorkout: $("#finishWorkout"),
+    trainingCount: $("#trainingCount"),
+    strengthGain: $("#strengthGain"),
+    readyToIncrease: $("#readyToIncrease"),
+    globalTimer: $("#globalTimer"),
+    globalTimerButton: $("#globalTimerButton"),
+    runForm: $("#runForm"),
+    bikeForm: $("#bikeForm"),
+    insights: $("#insights"),
+    logList: $("#logList"),
+    exportJson: $("#exportJson"),
+    importJson: $("#importJson"),
+    resetData: $("#resetData"),
+    exerciseTemplate: $("#exerciseTemplate")
   };
 
-  let deferredInstallPrompt = null;
   init();
 
   function init() {
-    els.workoutDate.value = toISODate();
+    $("#runDate").value = today();
+    $("#bikeDate").value = today();
     bindEvents();
     render();
     registerServiceWorker();
   }
 
+  function loadState() {
+    try {
+      const raw = localStorage.getItem(STORE_KEY);
+      if (raw) return JSON.parse(raw);
+    } catch (error) {
+      console.warn("State konnte nicht geladen werden", error);
+    }
+    return {
+      logs: seedLogs,
+      progression: Object.fromEntries(plan.map((exercise) => [exercise.id, { markers: countExclamationMarks(exercise.note), increases: 0, baseVolume: getPlannedVolume(exercise), bestVolume: getPlannedVolume(exercise) }])),
+      draft: Object.fromEntries(plan.map((exercise) => [exercise.id, exercise.sets.map((set) => ({ ...set }))]))
+    };
+  }
+
+  function saveState() { localStorage.setItem(STORE_KEY, JSON.stringify(state)); }
+
   function bindEvents() {
-    els.workoutForm.addEventListener("submit", handleWorkoutSubmit);
-    els.resetForm.addEventListener("click", resetWorkoutForm);
-    els.exerciseForm.addEventListener("submit", handleExerciseSubmit);
-    els.historySearch.addEventListener("input", renderHistory);
+    els.modeCards.forEach((card) => card.addEventListener("click", () => switchMode(card.dataset.mode)));
+    els.finishWorkout.addEventListener("click", finishWorkout);
+    els.globalTimerButton.addEventListener("click", () => startTimer(90));
+    els.runForm.addEventListener("submit", saveRun);
+    els.bikeForm.addEventListener("submit", saveBike);
     els.exportJson.addEventListener("click", exportJson);
     els.importJson.addEventListener("change", importJson);
-    els.clearData.addEventListener("click", clearData);
+    els.resetData.addEventListener("click", resetData);
 
-    document.querySelectorAll("[data-preset]").forEach((button) => {
-      button.addEventListener("click", () => applyPreset(button.dataset.preset));
-    });
-
+    let deferredInstallPrompt = null;
     window.addEventListener("beforeinstallprompt", (event) => {
       event.preventDefault();
       deferredInstallPrompt = event;
       els.installButton.hidden = false;
     });
-
     els.installButton.addEventListener("click", async () => {
       if (!deferredInstallPrompt) return;
       deferredInstallPrompt.prompt();
@@ -71,173 +102,188 @@
     });
   }
 
-  function loadState() {
-    const fallback = { exercises: [...defaultExercises], workouts: [], settings: { weeklyGoal: 3 } };
-    try {
-      const raw = localStorage.getItem(STORE_KEY);
-      if (!raw) return fallback;
-      const parsed = JSON.parse(raw);
-      return {
-        exercises: Array.isArray(parsed.exercises) && parsed.exercises.length ? parsed.exercises : fallback.exercises,
-        workouts: Array.isArray(parsed.workouts) ? parsed.workouts : [],
-        settings: { ...fallback.settings, ...(parsed.settings || {}) }
-      };
-    } catch (error) {
-      console.warn("Trainingsdaten konnten nicht geladen werden.", error);
-      return fallback;
-    }
+  function switchMode(mode) {
+    activeMode = mode;
+    els.modeCards.forEach((card) => card.classList.toggle("active", card.dataset.mode === mode));
+    Object.entries(els.views).forEach(([key, view]) => view.classList.toggle("active-view", key === mode));
   }
 
-  function saveState() { localStorage.setItem(STORE_KEY, JSON.stringify(state)); }
-  function render() { sortWorkouts(); renderStats(); renderExercises(); renderHistory(); }
-
-  function handleWorkoutSubmit(event) {
-    event.preventDefault();
-    let parsedExercises;
-    try { parsedExercises = parseExerciseInput(els.workoutExercises.value); } catch (error) { alert(error.message); return; }
-    const workout = { id: createId(), date: els.workoutDate.value, name: els.workoutName.value.trim(), exercises: parsedExercises, notes: els.workoutNotes.value.trim(), createdAt: new Date().toISOString() };
-    if (!workout.date || !workout.name) { alert("Bitte Datum und Fokus eintragen."); return; }
-    workout.exercises.forEach((exercise) => addExerciseToCatalog(exercise.name));
-    state.workouts.push(workout);
-    saveState();
-    render();
-    resetWorkoutForm({ keepDate: true });
-  }
-
-  function handleExerciseSubmit(event) {
-    event.preventDefault();
-    const name = els.exerciseName.value.trim();
-    if (!name) return;
-    addExerciseToCatalog(name);
-    els.exerciseName.value = "";
-    saveState();
+  function render() {
     renderExercises();
-  }
-
-  function addExerciseToCatalog(name) {
-    const exists = state.exercises.some((exercise) => exercise.toLowerCase() === name.toLowerCase());
-    if (!exists) state.exercises.push(name);
-    state.exercises.sort((a, b) => a.localeCompare(b, "de"));
-  }
-
-  function removeExerciseFromCatalog(name) {
-    state.exercises = state.exercises.filter((exercise) => exercise !== name);
-    saveState();
-    renderExercises();
-  }
-
-  function parseExerciseInput(input) {
-    const lines = input.split("\n").map((line) => line.trim()).filter(Boolean);
-    if (!lines.length) throw new Error("Bitte mindestens eine Übung eintragen.");
-    return lines.map((line) => {
-      const separatorIndex = line.indexOf(":");
-      if (separatorIndex === -1) throw new Error(`Ungültige Zeile: "${line}". Erwartet wird: Übung: 10x60, 8x65`);
-      const name = line.slice(0, separatorIndex).trim();
-      const setsRaw = line.slice(separatorIndex + 1).trim();
-      if (!name || !setsRaw) throw new Error(`Ungültige Zeile: "${line}". Bitte Übung und Sätze eintragen.`);
-      const sets = setsRaw.split(",").map((entry) => entry.trim()).filter(Boolean).map(parseSet);
-      if (!sets.length) throw new Error(`Keine Sätze für "${name}" gefunden.`);
-      return { name, sets };
-    });
-  }
-
-  function parseSet(entry) {
-    const match = entry.match(/^(\d+)\s*x\s*([0-9]+(?:[.,][0-9]+)?)$/i);
-    if (!match) throw new Error(`Ungültiger Satz: "${entry}". Nutze z. B. 10x60 oder 12x7,5.`);
-    const reps = Number.parseInt(match[1], 10);
-    const weight = Number.parseFloat(match[2].replace(",", "."));
-    if (!Number.isFinite(reps) || reps <= 0 || !Number.isFinite(weight) || weight < 0) throw new Error(`Ungültiger Satz: "${entry}".`);
-    return { reps, weight };
-  }
-
-  function renderStats() {
-    const today = toISODate();
-    const todaysWorkouts = state.workouts.filter((workout) => workout.date === today);
-    const weekStart = getWeekStart(new Date());
-    const weeklyWorkouts = state.workouts.filter((workout) => parseDate(workout.date) >= weekStart);
-    const volume = weeklyWorkouts.reduce((sum, workout) => sum + getWorkoutVolume(workout), 0);
-    els.weekWorkouts.textContent = String(weeklyWorkouts.length);
-    els.totalVolume.textContent = `${formatNumber(volume)} kg`;
-    els.streakDays.textContent = String(getStreakDays());
-    els.todaySummary.textContent = todaysWorkouts.length ? `Heute gespeichert: ${todaysWorkouts.map((workout) => workout.name).join(", ")}.` : `Noch kein Training für heute. Wochenziel: ${weeklyWorkouts.length}/${state.settings.weeklyGoal} Einheiten.`;
+    renderDashboard();
+    renderInsights();
+    renderLogs();
   }
 
   function renderExercises() {
-    els.exerciseList.textContent = "";
-    state.exercises.forEach((exercise) => {
-      const chip = document.createElement("span");
-      chip.className = "chip";
-      const label = document.createElement("span");
-      label.textContent = exercise;
-      const useButton = document.createElement("button");
-      useButton.type = "button";
-      useButton.textContent = "+";
-      useButton.title = `${exercise} ins Training übernehmen`;
-      useButton.addEventListener("click", () => appendExerciseLine(exercise));
-      const removeButton = document.createElement("button");
-      removeButton.type = "button";
-      removeButton.textContent = "×";
-      removeButton.title = `${exercise} entfernen`;
-      removeButton.addEventListener("click", () => removeExerciseFromCatalog(exercise));
-      chip.append(label, useButton, removeButton);
-      els.exerciseList.append(chip);
-    });
-  }
-
-  function renderHistory() {
-    const query = els.historySearch.value.trim().toLowerCase();
-    const filtered = state.workouts.filter((workout) => {
-      if (!query) return true;
-      const haystack = [workout.date, workout.name, workout.notes, ...workout.exercises.map((exercise) => exercise.name)].join(" ").toLowerCase();
-      return haystack.includes(query);
-    });
-    els.historyList.textContent = "";
-    if (!filtered.length) {
-      const empty = document.createElement("p");
-      empty.className = "empty-state";
-      empty.textContent = state.workouts.length ? "Keine Trainings zu deiner Suche gefunden." : "Noch keine Trainings gespeichert.";
-      els.historyList.append(empty);
-      return;
-    }
-    filtered.forEach((workout) => {
-      const node = els.workoutTemplate.content.firstElementChild.cloneNode(true);
-      node.querySelector("h3").textContent = workout.name;
-      node.querySelector(".workout-card-header p").textContent = formatDate(workout.date);
-      node.querySelector(".delete-workout").addEventListener("click", () => deleteWorkout(workout.id));
-      const list = node.querySelector(".exercise-summary");
-      workout.exercises.forEach((exercise) => {
-        const item = document.createElement("li");
-        const sets = exercise.sets.map((set) => `${set.reps}x${formatWeight(set.weight)} kg`).join(", ");
-        const name = document.createElement("strong");
-        name.textContent = exercise.name;
-        item.append(name, document.createTextNode(`: ${sets} · Volumen ${formatNumber(getExerciseVolume(exercise))} kg`));
-        list.append(item);
+    els.exerciseCards.textContent = "";
+    plan.forEach((exercise) => {
+      const card = els.exerciseTemplate.content.firstElementChild.cloneNode(true);
+      const progression = getProgression(exercise.id);
+      card.dataset.id = exercise.id;
+      card.querySelector(".exercise-image").textContent = exercise.icon;
+      card.querySelector("h3").textContent = exercise.name;
+      card.querySelector(".exercise-meta").textContent = `${exercise.fullName} · Ziel/Referenz: ${exercise.target}`;
+      const ready = progression.markers >= 3;
+      card.querySelector(".progression-box").innerHTML = `
+        <strong>${ready ? "Bereit für Gewicht hoch" : "Progression sammeln"}</strong>
+        <span>${progression.markers}/3 Hoch-Marker · ${progression.increases} echte Steigerungen bisher</span>
+        <span class="progression-pill ${ready ? "ready" : ""}">${ready ? "Jetzt erhöhen" : "Noch beobachten"}</span>
+        ${exercise.coaching ? `<span>${escapeHtml(exercise.coaching)}</span>` : ""}
+      `;
+      const sets = card.querySelector(".sets");
+      const draftSets = state.draft[exercise.id] || exercise.sets;
+      draftSets.forEach((set, index) => {
+        const row = document.createElement("label");
+        row.className = "set-row";
+        row.innerHTML = `<span>Satz ${index + 1}</span><input type="number" step="0.5" inputmode="decimal" value="${set.kg || 0}" aria-label="Gewicht Satz ${index + 1}"><input type="number" step="1" inputmode="numeric" value="${set.reps || 0}" aria-label="Wiederholungen Satz ${index + 1}">`;
+        const [kgInput, repsInput] = row.querySelectorAll("input");
+        kgInput.addEventListener("input", () => updateDraft(exercise.id, index, "kg", kgInput.value));
+        repsInput.addEventListener("input", () => updateDraft(exercise.id, index, "reps", repsInput.value));
+        sets.append(row);
       });
-      node.querySelector(".notes").textContent = workout.notes ? `Notiz: ${workout.notes}` : "";
-      els.historyList.append(node);
+      card.querySelector(".timer-button").addEventListener("click", () => startTimer(90));
+      card.querySelector(".hoch-button").addEventListener("click", () => markHoch(exercise.id));
+      card.querySelector(".done-button").addEventListener("click", () => logExercise(exercise.id));
+      els.exerciseCards.append(card);
     });
   }
 
-  function deleteWorkout(id) {
-    const workout = state.workouts.find((entry) => entry.id === id);
-    if (!workout) return;
-    if (!confirm(`Training "${workout.name}" vom ${formatDate(workout.date)} löschen?`)) return;
-    state.workouts = state.workouts.filter((entry) => entry.id !== id);
+  function updateDraft(id, index, key, value) {
+    if (!state.draft[id]) state.draft[id] = [];
+    if (!state.draft[id][index]) state.draft[id][index] = { kg: 0, reps: 0 };
+    state.draft[id][index][key] = Number(value) || 0;
+    saveState();
+  }
+
+  function markHoch(id) {
+    const progression = getProgression(id);
+    progression.markers += 1;
+    if (progression.markers >= 3) {
+      showMessage("Dreimal hoch markiert: Diese Übung sollte jetzt wirklich erhöht werden.");
+    } else {
+      showMessage(`Hoch-Marker gespeichert: ${progression.markers}/3.`);
+    }
     saveState();
     render();
   }
 
-  function applyPreset(name) { els.workoutName.value = name; els.workoutExercises.value = presets[name] || ""; els.workoutExercises.focus(); }
-  function appendExerciseLine(name) { const prefix = els.workoutExercises.value.trim() ? "\n" : ""; els.workoutExercises.value += `${prefix}${name}: 10x0, 10x0`; els.workoutExercises.focus(); }
-  function resetWorkoutForm() { els.workoutForm.reset(); els.workoutDate.value = toISODate(); }
+  function logExercise(id) {
+    const exercise = plan.find((entry) => entry.id === id);
+    const sets = (state.draft[id] || exercise.sets).map((set) => ({ kg: Number(set.kg) || 0, reps: Number(set.reps) || 0 }));
+    const volume = sets.reduce((sum, set) => sum + set.kg * set.reps, 0);
+    const progression = getProgression(id);
+    progression.bestVolume = Math.max(progression.bestVolume || 0, volume);
+    state.logs.unshift({ id: cryptoId(), type: "fitness", date: today(), exerciseId: id, title: exercise.name, sets, volume, markersAtLog: progression.markers });
+    saveState();
+    const card = document.querySelector(`[data-id="${id}"]`);
+    if (card) card.classList.add("done");
+    renderDashboard();
+    renderInsights();
+    renderLogs();
+  }
+
+  function finishWorkout() {
+    const loggedToday = state.logs.filter((log) => log.type === "fitness" && log.date === today()).length;
+    showMessage(loggedToday ? `${loggedToday} Fitness-Logs für heute gespeichert.` : "Noch keine Übung geloggt. Tippe pro Übung auf ‚Übung loggen‘.");
+  }
+
+  function saveRun(event) {
+    event.preventDefault();
+    const distance = Number($("#runDistance").value) || 0;
+    const minutes = Number($("#runMinutes").value) || 0;
+    const pace = distance && minutes ? minutes / distance : 0;
+    state.logs.unshift({ id: cryptoId(), type: "run", date: $("#runDate").value || today(), title: $("#runType").value || "Laufen", distance, minutes, pulse: Number($("#runPulse").value) || null, pace, note: $("#runNote").value.trim() });
+    saveState();
+    event.target.reset();
+    $("#runDate").value = today();
+    $("#runType").value = "Zone 2";
+    render();
+  }
+
+  function saveBike(event) {
+    event.preventDefault();
+    const distance = Number($("#bikeDistance").value) || 0;
+    const minutes = Number($("#bikeMinutes").value) || 0;
+    const speed = Number($("#bikeSpeed").value) || (distance && minutes ? distance / (minutes / 60) : 0);
+    state.logs.unshift({ id: cryptoId(), type: "bike", date: $("#bikeDate").value || today(), title: $("#bikeType").value || "Fahrrad", distance, minutes, speed, note: $("#bikeNote").value.trim() });
+    saveState();
+    event.target.reset();
+    $("#bikeDate").value = today();
+    $("#bikeType").value = "Gym-Bike";
+    render();
+  }
+
+  function renderDashboard() {
+    els.trainingCount.textContent = state.logs.length;
+    const gains = plan.map((exercise) => getStrengthGain(exercise.id)).filter((value) => Number.isFinite(value));
+    const avgGain = gains.length ? gains.reduce((a, b) => a + b, 0) / gains.length : 0;
+    els.strengthGain.textContent = `${Math.round(avgGain)}%`;
+    els.readyToIncrease.textContent = plan.filter((exercise) => getProgression(exercise.id).markers >= 3).length;
+  }
+
+  function renderInsights() {
+    const runLogs = state.logs.filter((log) => log.type === "run" && log.distance);
+    const bikeLogs = state.logs.filter((log) => log.type === "bike" && log.speed);
+    const bestRun = runLogs.length ? Math.min(...runLogs.map((log) => log.pace || 999)) : null;
+    const bestBike = bikeLogs.length ? Math.max(...bikeLogs.map((log) => log.speed || 0)) : null;
+    const ready = plan.filter((exercise) => getProgression(exercise.id).markers >= 3).map((exercise) => exercise.name);
+    els.insights.innerHTML = `
+      <article class="insight"><strong>Progression</strong><span>${ready.length ? `${ready.join(", ")} sollte erhöht werden.` : "Noch keine Übung hat 3 Hoch-Marker."}</span></article>
+      <article class="insight"><strong>Laufen</strong><span>${bestRun ? `Beste Pace: ${formatPace(bestRun)} min/km.` : "Noch keine Laufdaten mit Pace."}</span></article>
+      <article class="insight"><strong>Fahrrad</strong><span>${bestBike ? `Bester Speed: ${bestBike.toFixed(1).replace(".", ",")} km/h.` : "Noch keine Bike-Daten mit Speed."}</span></article>
+    `;
+  }
+
+  function renderLogs() {
+    els.logList.textContent = "";
+    state.logs.slice(0, 30).forEach((log) => {
+      const item = document.createElement("article");
+      item.className = "log-item";
+      let details = "";
+      if (log.type === "fitness") details = `${log.sets.map((set) => `${set.kg}kg x ${set.reps}`).join(" · ")} · Volumen ${Math.round(log.volume)} kg · Kraftzuwachs ${Math.round(getStrengthGain(log.exerciseId))}%`;
+      if (log.type === "run") details = `${log.distance || "?"} km · ${log.minutes || "?"} min · ${log.pace ? formatPace(log.pace) + " min/km" : "Pace offen"}${log.pulse ? ` · Puls Ø ${log.pulse}` : ""}`;
+      if (log.type === "bike") details = `${log.distance || "?"} km · ${log.minutes || "?"} min · ${log.speed ? log.speed.toFixed(1).replace(".", ",") + " km/h" : "Speed offen"}`;
+      item.innerHTML = `<header><h3>${escapeHtml(log.title)}</h3><small>${formatDate(log.date)} · ${labelForType(log.type)}</small></header><p>${escapeHtml(details)}${log.note ? ` · ${escapeHtml(log.note)}` : ""}</p>`;
+      els.logList.append(item);
+    });
+  }
+
+  function startTimer(seconds) {
+    clearInterval(timerInterval);
+    timerLeft = seconds;
+    updateTimerLabel();
+    els.globalTimerButton.textContent = "läuft ...";
+    timerInterval = setInterval(() => {
+      timerLeft -= 1;
+      updateTimerLabel();
+      if (timerLeft <= 0) {
+        clearInterval(timerInterval);
+        timerInterval = null;
+        els.globalTimerButton.textContent = "90s starten";
+        showMessage("Pause vorbei. Nächster Satz.");
+      }
+    }, 1000);
+  }
+
+  function updateTimerLabel() { els.globalTimer.textContent = String(Math.max(0, timerLeft)); }
+  function getProgression(id) { if (!state.progression[id]) state.progression[id] = { markers: 0, increases: 0, baseVolume: 0, bestVolume: 0 }; return state.progression[id]; }
+  function getStrengthGain(id) { const p = getProgression(id); return p.baseVolume ? ((p.bestVolume - p.baseVolume) / p.baseVolume) * 100 : 0; }
+  function getPlannedVolume(exercise) { return exercise.sets.reduce((sum, set) => sum + (set.kg || 0) * (set.reps || 0), 0); }
+  function countExclamationMarks(value = "") { return (value.match(/!/g) || []).length; }
+  function formatDate(value) { return new Intl.DateTimeFormat("de-DE", { dateStyle: "medium" }).format(new Date(value)); }
+  function formatPace(value) { const min = Math.floor(value); const sec = Math.round((value - min) * 60); return `${min}:${String(sec).padStart(2, "0")}`; }
+  function labelForType(type) { return type === "fitness" ? "Fitness" : type === "run" ? "Laufen" : "Fahrrad"; }
+  function cryptoId() { return crypto?.randomUUID ? crypto.randomUUID() : `${Date.now()}-${Math.random().toString(16).slice(2)}`; }
+  function escapeHtml(value = "") { return String(value).replace(/[&<>"]/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;" }[char])); }
+  function showMessage(message) { window.alert(message); }
 
   function exportJson() {
-    const data = JSON.stringify(state, null, 2);
-    const blob = new Blob([data], { type: "application/json" });
+    const blob = new Blob([JSON.stringify(state, null, 2)], { type: "application/json" });
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.href = url;
-    link.download = `flos-fitness-backup-${toISODate()}.json`;
+    link.download = `flos-fitness-${today()}.json`;
     link.click();
     URL.revokeObjectURL(url);
   }
@@ -246,15 +292,11 @@
     const file = event.target.files?.[0];
     if (!file) return;
     try {
-      const text = await file.text();
-      const imported = JSON.parse(text);
-      if (!Array.isArray(imported.workouts) || !Array.isArray(imported.exercises)) throw new Error("Die Datei enthält keine gültigen Trainingsdaten.");
-      state.workouts = imported.workouts;
-      state.exercises = imported.exercises;
-      state.settings = { weeklyGoal: 3, ...(imported.settings || {}) };
+      const imported = JSON.parse(await file.text());
+      if (!Array.isArray(imported.logs) || !imported.progression || !imported.draft) throw new Error("Ungültiges Backup." );
+      Object.assign(state, imported);
       saveState();
       render();
-      alert("Import abgeschlossen.");
     } catch (error) {
       alert(`Import fehlgeschlagen: ${error.message}`);
     } finally {
@@ -262,44 +304,12 @@
     }
   }
 
-  function clearData() {
-    if (!confirm("Alle lokalen Trainingsdaten löschen? Exportiere vorher ein Backup, wenn du die Daten behalten willst.")) return;
-    state.exercises = [...defaultExercises];
-    state.workouts = [];
-    state.settings = { weeklyGoal: 3 };
-    saveState();
-    resetWorkoutForm();
-    render();
+  function resetData() {
+    if (!confirm("Alle lokalen Daten zurücksetzen?")) return;
+    localStorage.removeItem(STORE_KEY);
+    location.reload();
   }
 
-  function getWorkoutVolume(workout) { return workout.exercises.reduce((sum, exercise) => sum + getExerciseVolume(exercise), 0); }
-  function getExerciseVolume(exercise) { return exercise.sets.reduce((sum, set) => sum + set.reps * set.weight, 0); }
-
-  function getStreakDays() {
-    const trainingDates = new Set(state.workouts.map((workout) => workout.date));
-    let cursor = new Date();
-    let count = 0;
-    if (!trainingDates.has(toISODate(cursor))) cursor.setDate(cursor.getDate() - 1);
-    while (trainingDates.has(toISODate(cursor))) { count += 1; cursor.setDate(cursor.getDate() - 1); }
-    return count;
-  }
-
-  function getWeekStart(date) {
-    const start = new Date(date.getFullYear(), date.getMonth(), date.getDate());
-    const day = start.getDay();
-    const diff = (day + 6) % 7;
-    start.setDate(start.getDate() - diff);
-    start.setHours(0, 0, 0, 0);
-    return start;
-  }
-
-  function parseDate(value) { const [year, month, day] = value.split("-").map(Number); return new Date(year, month - 1, day); }
-  function toISODate(date = new Date()) { const local = new Date(date.getTime() - date.getTimezoneOffset() * 60000); return local.toISOString().slice(0, 10); }
-  function formatDate(value) { return new Intl.DateTimeFormat("de-DE", { dateStyle: "medium" }).format(parseDate(value)); }
-  function formatWeight(value) { return Number.isInteger(value) ? String(value) : value.toFixed(1).replace(".", ","); }
-  function formatNumber(value) { return new Intl.NumberFormat("de-DE", { maximumFractionDigits: 1 }).format(value); }
-  function sortWorkouts() { state.workouts.sort((a, b) => `${b.date}${b.createdAt || ""}`.localeCompare(`${a.date}${a.createdAt || ""}`)); }
-  function createId() { return window.crypto?.randomUUID ? window.crypto.randomUUID() : `${Date.now()}-${Math.random().toString(16).slice(2)}`; }
   function registerServiceWorker() {
     if ("serviceWorker" in navigator) {
       navigator.serviceWorker.register("service-worker.js").catch((error) => console.warn("Service Worker konnte nicht registriert werden.", error));
