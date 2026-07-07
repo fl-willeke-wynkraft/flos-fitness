@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#111827">
+  <title>Flos Fitness</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="app-header">
+    <div>
+      <p class="eyebrow">Privates Trainingstagebuch</p>
+      <h1>Flos Fitness</h1>
+      <p class="subtitle">Plane, protokolliere und analysiere dein Training direkt im Browser.</p>
+    </div>
+    <button id="installButton" class="ghost-button" hidden>App installieren</button>
+  </header>
+
+  <main class="layout">
+    <section class="panel hero-panel">
+      <div>
+        <h2>Heute trainieren</h2>
+        <p id="todaySummary">Noch kein Training für heute gespeichert.</p>
+      </div>
+      <div class="stats-grid" aria-label="Trainingsstatistiken">
+        <article><span id="weekWorkouts">0</span><small>Trainings diese Woche</small></article>
+        <article><span id="totalVolume">0 kg</span><small>Volumen diese Woche</small></article>
+        <article><span id="streakDays">0</span><small>Tage Serie</small></article>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="section-title">
+        <div>
+          <p class="eyebrow">Neues Training</p>
+          <h2>Einheit erfassen</h2>
+        </div>
+        <div class="preset-buttons" aria-label="Trainingsvorlagen">
+          <button type="button" data-preset="Push">Push</button>
+          <button type="button" data-preset="Pull">Pull</button>
+          <button type="button" data-preset="Beine">Beine</button>
+          <button type="button" data-preset="Ganzkörper">Ganzkörper</button>
+        </div>
+      </div>
+
+      <form id="workoutForm" class="workout-form">
+        <label>Datum<input id="workoutDate" type="date" required></label>
+        <label>Fokus / Name<input id="workoutName" type="text" placeholder="z. B. Push, Laufen, Oberkörper" required></label>
+        <label class="full-width">Übungen und Sätze
+          <textarea id="workoutExercises" rows="8" placeholder="Beispiel:\nBankdrücken: 10x60, 8x65, 6x70\nSchulterdrücken: 10x25, 10x25\nLiegestütze: 20x0, 15x0" required></textarea>
+          <small>Format: Übung: WiederholungenxGewicht, WiederholungenxGewicht. Körpergewicht-Übungen mit 0 kg eintragen.</small>
+        </label>
+        <label class="full-width">Notizen<textarea id="workoutNotes" rows="3" placeholder="Wie lief die Einheit? Energie, Schmerzen, Technik, Stimmung ..."></textarea></label>
+        <div class="form-actions full-width">
+          <button type="submit" class="primary-button">Training speichern</button>
+          <button type="button" id="resetForm" class="ghost-button">Formular leeren</button>
+        </div>
+      </form>
+    </section>
+
+    <section class="panel split-panel">
+      <div>
+        <div class="section-title compact"><div><p class="eyebrow">Übungen</p><h2>Katalog</h2></div></div>
+        <form id="exerciseForm" class="inline-form">
+          <input id="exerciseName" type="text" placeholder="Neue Übung">
+          <button type="submit">Hinzufügen</button>
+        </form>
+        <div id="exerciseList" class="chip-list"></div>
+      </div>
+
+      <div>
+        <div class="section-title compact"><div><p class="eyebrow">Daten</p><h2>Backup</h2></div></div>
+        <div class="backup-actions">
+          <button type="button" id="exportJson">JSON exportieren</button>
+          <label class="file-button">JSON importieren<input id="importJson" type="file" accept="application/json"></label>
+          <button type="button" id="clearData" class="danger-button">Alles löschen</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="section-title">
+        <div><p class="eyebrow">Verlauf</p><h2>Gespeicherte Trainings</h2></div>
+        <input id="historySearch" class="search-input" type="search" placeholder="Suche nach Übung, Fokus oder Notiz">
+      </div>
+      <div id="historyList" class="history-list"></div>
+    </section>
+  </main>
+
+  <template id="workoutTemplate">
+    <article class="workout-card">
+      <div class="workout-card-header">
+        <div><h3></h3><p></p></div>
+        <button type="button" class="delete-workout" aria-label="Training löschen">Löschen</button>
+      </div>
+      <ul class="exercise-summary"></ul>
+      <p class="notes"></p>
+    </article>
+  </template>
+
+  <script src="app.js" defer></script>
+</body>
+</html>
