@@ -1,0 +1,217 @@
+:root {
+  --ink: #111827;
+  --premium-bg: #f6f4ef;
+  --premium-card: rgba(255, 255, 255, 0.92);
+}
+
+.ux-v10 .topbar {
+  align-items: flex-start;
+  padding-top: 1.3rem;
+}
+
+.ux-v10 .topbar h1 {
+  font-size: clamp(2.6rem, 10vw, 6.2rem);
+  letter-spacing: -.095em;
+}
+
+.ux-v10 .subtitle {
+  max-width: 38rem;
+}
+
+.ux-v10 .daily-boost {
+  min-height: 12rem;
+  border: 0;
+  background: #111827;
+  color: white;
+  box-shadow: 0 24px 70px rgba(17, 24, 39, .18);
+}
+
+.ux-v10 .daily-boost .eyebrow {
+  color: #f5c86a;
+}
+
+.ux-v10 .daily-boost h2 {
+  font-size: clamp(1.8rem, 4vw, 3.4rem);
+  line-height: .95;
+  letter-spacing: -.06em;
+}
+
+.ux-v10 .mode-card,
+.ux-v10 .metric-card,
+.ux-v10 .view,
+.ux-v10 .history-panel,
+.ux-v10 .exercise-card {
+  border-color: rgba(17, 24, 39, .08);
+  box-shadow: 0 16px 44px rgba(17, 24, 39, .08);
+}
+
+.ux-v10 .mode-card {
+  min-height: 7rem;
+}
+
+.ux-v10 .mode-card.active {
+  background: #111827;
+  color: white;
+}
+
+.ux-v10 .mode-card.active small {
+  color: rgba(255,255,255,.68);
+}
+
+.ux-v10 .mode-card.active .mode-visual {
+  background: rgba(255,255,255,.12);
+}
+
+.ux-v10 .timer-card {
+  position: sticky;
+  top: .75rem;
+  z-index: 8;
+  border: 0;
+  background: #111827;
+  color: white;
+}
+
+.ux-v10 .timer-card small {
+  color: rgba(255,255,255,.68);
+}
+
+.ux-v10.timer-running .timer-card,
+.ux-v10 .timer-running .timer-card {
+  outline: 3px solid rgba(245, 200, 106, .55);
+}
+
+.workout-focus-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  border-radius: 1.5rem;
+  background: linear-gradient(135deg, #111827, #26352f);
+  color: white;
+  padding: 1rem;
+}
+
+.workout-focus-bar .eyebrow {
+  color: #f5c86a;
+}
+
+.workout-focus-bar h2 {
+  margin-bottom: 0;
+}
+
+.focus-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem;
+}
+
+.ux-v10 .exercise-grid {
+  grid-template-columns: 1fr;
+  max-width: 860px;
+  margin: 0 auto;
+}
+
+.ux-v10 .exercise-card {
+  position: relative;
+  overflow: hidden;
+  padding: 1.1rem;
+  border-radius: 1.6rem;
+}
+
+.ux-v10 .exercise-card.focus-card {
+  border-color: rgba(47, 125, 104, .45);
+  outline: 4px solid rgba(47, 125, 104, .11);
+}
+
+.ux-v10 .exercise-head {
+  grid-template-columns: auto auto 1fr;
+}
+
+.exercise-number {
+  width: 2.4rem;
+  height: 2.4rem;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  background: #111827;
+  color: white;
+  font-size: .82rem;
+  font-weight: 900;
+  letter-spacing: -.03em;
+}
+
+.ux-v10 .sets {
+  gap: .7rem;
+}
+
+.ux-v10 .set-row {
+  border: 1px solid rgba(17,24,39,.08);
+  border-radius: 1rem;
+  padding: .55rem;
+  background: #fbfaf7;
+}
+
+.ux-v10 input {
+  background: white;
+}
+
+.ux-toast {
+  position: fixed;
+  left: 50%;
+  bottom: 1rem;
+  z-index: 200;
+  transform: translate(-50%, 1rem);
+  opacity: 0;
+  pointer-events: none;
+  border-radius: 999px;
+  background: #111827;
+  color: white;
+  box-shadow: 0 20px 60px rgba(0,0,0,.25);
+  padding: .8rem 1rem;
+  font-weight: 850;
+  transition: opacity .2s ease, transform .2s ease;
+}
+
+.ux-toast.show {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+.ux-toast.important {
+  background: #2f7d68;
+}
+
+@media (max-width: 720px) {
+  .ux-v10 .topbar {
+    padding-top: .85rem;
+  }
+
+  .ux-v10 .dashboard-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .ux-v10 .timer-card {
+    grid-column: 1 / -1;
+    top: .4rem;
+  }
+
+  .workout-focus-bar {
+    display: grid;
+  }
+
+  .focus-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .ux-v10 .exercise-head {
+    grid-template-columns: auto auto 1fr;
+  }
+
+  .ux-toast {
+    width: calc(100% - 1rem);
+    border-radius: 1rem;
+    text-align: center;
+  }
+}
