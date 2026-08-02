@@ -23,12 +23,6 @@
     toast('Pause läuft: 90 Sekunden.');
   }
 
-  function clearTimer() {
-    localStorage.removeItem(TIMER_KEY);
-    document.body.classList.remove('timer-running');
-    updateTimerText(TIMER_SECONDS);
-  }
-
   function updateTimerText(seconds) {
     const display = $('#globalTimer');
     if (!display) return;
@@ -42,8 +36,7 @@
       return;
     }
 
-    const remainingMs = end - Date.now();
-    const remainingSeconds = Math.ceil(remainingMs / 1000);
+    const remainingSeconds = Math.ceil((end - Date.now()) / 1000);
 
     if (remainingSeconds > 0) {
       document.body.classList.add('timer-running');
@@ -66,11 +59,6 @@
     if ('vibrate' in navigator) {
       try { navigator.vibrate([180, 80, 180]); } catch (_) {}
     }
-    try {
-      const audio = new Audio('data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABAAZGF0YQAAAAA=');
-      audio.volume = 0.5;
-      audio.play().catch(() => {});
-    } catch (_) {}
   }
 
   function startTicking() {
@@ -95,8 +83,7 @@
 
   function buildWorkoutFocus() {
     const fitnessView = $('#fitnessView');
-    const exerciseCards = $('#exerciseCards');
-    if (!fitnessView || !exerciseCards || $('#workoutFocusBar')) return;
+    if (!fitnessView || $('#workoutFocusBar')) return;
 
     const bar = document.createElement('section');
     bar.id = 'workoutFocusBar';
@@ -107,8 +94,8 @@
         <h2>Heute sauber durchziehen.</h2>
       </div>
       <div class="focus-actions">
-        <button id="focusFirstExercise" class="primary-button">Erste Übung</button>
-        <button id="focusNextExercise" class="soft-button">Nächste offene</button>
+        <button id="focusFirstExercise" class="primary-button">Start</button>
+        <button id="focusNextExercise" class="soft-button">Nächste</button>
       </div>`;
     fitnessView.prepend(bar);
 
@@ -153,16 +140,25 @@
     }, true);
   }
 
+  function polishCopy() {
+    const title = $('.topbar h1');
+    if (title) title.textContent = 'Flo';
+    const workoutButton = $('#finishWorkout');
+    if (workoutButton) workoutButton.textContent = 'Abschließen';
+  }
+
   function boot() {
-    document.body.classList.add('ux-v10');
+    document.body.classList.remove('ux-v10');
+    document.body.classList.add('ux-v11');
     buildWorkoutFocus();
     enhanceCards();
+    polishCopy();
     interceptTimerClicks();
     startTicking();
     tickTimer();
     window.addEventListener('focus', tickTimer);
     document.addEventListener('visibilitychange', tickTimer);
-    window.setTimeout(() => { buildWorkoutFocus(); enhanceCards(); tickTimer(); }, 600);
+    window.setTimeout(() => { buildWorkoutFocus(); enhanceCards(); polishCopy(); tickTimer(); }, 600);
   }
 
   if (document.readyState === 'loading') {
