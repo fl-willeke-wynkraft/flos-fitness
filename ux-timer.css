@@ -2,17 +2,24 @@
   overflow: visible;
 }
 
+.ux-v11 .timer-anchor {
+  width: 100%;
+  height: 0;
+  grid-column: 1 / -1;
+}
+
 .ux-v11 .timer-card {
-  position: fixed !important;
-  left: 50% !important;
+  position: relative !important;
+  left: auto !important;
   right: auto !important;
-  top: calc(env(safe-area-inset-top, 0px) + 7.25rem) !important;
+  top: auto !important;
   bottom: auto !important;
-  transform: translateX(-50%) !important;
-  z-index: 90 !important;
-  width: min(980px, calc(100vw - 1.2rem)) !important;
+  transform: none !important;
+  z-index: 20 !important;
+  width: 100% !important;
   min-height: 4.15rem;
   display: grid !important;
+  grid-column: 1 / -1 !important;
   grid-template-columns: auto 1fr auto !important;
   align-items: center;
   gap: .65rem;
@@ -20,12 +27,25 @@
   padding: .55rem .75rem !important;
   border-radius: 999px !important;
   outline: 1px solid rgba(255, 253, 248, .18);
+  transition: box-shadow .18s ease, background .18s ease;
+}
+
+.ux-v11 .timer-card.timer-docked {
+  position: fixed !important;
+  left: 50% !important;
+  top: var(--timer-dock-top, 8rem) !important;
+  transform: translateX(-50%) !important;
+  z-index: 95 !important;
+  width: min(980px, calc(100vw - 1.2rem)) !important;
+  box-shadow: 0 18px 50px rgba(23, 19, 15, .24);
+  backdrop-filter: blur(16px);
 }
 
 .ux-v11 .timer-card span {
   width: 4rem;
   text-align: center;
   justify-self: center;
+  font-variant-numeric: tabular-nums;
 }
 
 .ux-v11 .timer-card small {
@@ -43,25 +63,71 @@
 }
 
 .ux-v11.timer-running .timer-card {
-  box-shadow: 0 22px 70px rgba(36, 79, 58, .34);
+  box-shadow: 0 20px 60px rgba(36, 79, 58, .30);
 }
 
 .ux-v11 .shell {
-  padding-bottom: 8.5rem;
+  padding-bottom: 7.5rem;
 }
 
-.ux-v11 .dashboard-grid {
-  padding-top: 4.75rem;
+.ux-v13 .workout-progress-row {
+  display: grid;
+  grid-template-columns: auto minmax(90px, 1fr);
+  align-items: center;
+  gap: .65rem;
+  margin-top: .65rem;
+  color: var(--app-muted);
+  font-size: .8rem;
+  font-weight: 760;
+}
+
+.ux-v13 .workout-progress-track {
+  height: .42rem;
+  overflow: hidden;
+  border-radius: 999px;
+  background: #e9e2d5;
+}
+
+.ux-v13 .workout-progress-track i {
+  display: block;
+  width: 0;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--app-green);
+  transition: width .22s ease;
+}
+
+.ux-v13 .exercise-card.done .done-button {
+  background: #dce9df;
+  color: var(--app-green);
+}
+
+.ux-v13 .exercise-card.done::after {
+  content: '✓';
+  position: absolute;
+  top: .8rem;
+  right: .8rem;
+  display: grid;
+  place-items: center;
+  width: 1.7rem;
+  height: 1.7rem;
+  border-radius: 999px;
+  background: var(--app-green);
+  color: white;
+  font-size: .78rem;
+  font-weight: 900;
 }
 
 @media (max-width: 520px) {
   .ux-v11 .timer-card {
-    top: calc(env(safe-area-inset-top, 0px) + 7.85rem) !important;
-    width: min(100vw - .75rem, 980px) !important;
     min-height: 3.85rem;
     grid-template-columns: 3.25rem 1fr auto !important;
     gap: .45rem;
     padding: .48rem .55rem !important;
+  }
+
+  .ux-v11 .timer-card.timer-docked {
+    width: calc(100vw - .75rem) !important;
   }
 
   .ux-v11 .timer-card span {
@@ -75,7 +141,8 @@
     padding-inline: .7rem;
   }
 
-  .ux-v11 .dashboard-grid {
-    padding-top: 4.55rem;
+  .ux-v13 .workout-progress-row {
+    grid-template-columns: 1fr;
+    gap: .35rem;
   }
 }
