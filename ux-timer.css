@@ -1,69 +1,81 @@
 .ux-v11 .dashboard-grid {
-  position: relative;
   overflow: visible;
 }
 
 .ux-v11 .timer-card {
-  position: sticky !important;
-  top: calc(env(safe-area-inset-top, 0px) + 8.6rem) !important;
+  position: fixed !important;
+  left: 50% !important;
+  right: auto !important;
+  top: calc(env(safe-area-inset-top, 0px) + 7.25rem) !important;
   bottom: auto !important;
-  z-index: 55 !important;
-  grid-column: 1 / -1 !important;
-  margin: .25rem 0 .45rem;
+  transform: translateX(-50%) !important;
+  z-index: 90 !important;
+  width: min(980px, calc(100vw - 1.2rem)) !important;
+  min-height: 4.15rem;
+  display: grid !important;
+  grid-template-columns: auto 1fr auto !important;
+  align-items: center;
+  gap: .65rem;
+  margin: 0 !important;
+  padding: .55rem .75rem !important;
+  border-radius: 999px !important;
   outline: 1px solid rgba(255, 253, 248, .18);
 }
 
-.ux-v11 .timer-card::before {
-  content: 'Rest';
-  display: inline-flex;
-  width: fit-content;
-  align-self: center;
-  justify-self: center;
-  padding: .28rem .55rem;
-  border-radius: 999px;
-  background: rgba(255,255,255,.14);
-  color: rgba(255,255,255,.82);
-  font-size: .72rem;
-  font-weight: 850;
-  letter-spacing: .08em;
-  text-transform: uppercase;
-}
-
 .ux-v11 .timer-card span {
+  width: 4rem;
+  text-align: center;
   justify-self: center;
 }
 
 .ux-v11 .timer-card small {
-  display: none;
+  display: block !important;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ux-v11 .timer-card .primary-button {
+  width: auto !important;
+  min-width: 7.2rem;
+  white-space: nowrap;
 }
 
 .ux-v11.timer-running .timer-card {
-  transform: translateZ(0);
   box-shadow: 0 22px 70px rgba(36, 79, 58, .34);
 }
 
-.ux-v11 .timer-card .primary-button::after {
-  content: '';
+.ux-v11 .shell {
+  padding-bottom: 8.5rem;
 }
 
-@media (min-width: 760px) {
-  .ux-v11 .timer-card {
-    top: calc(env(safe-area-inset-top, 0px) + 8.2rem) !important;
-    grid-column: 1 / -1 !important;
-  }
+.ux-v11 .dashboard-grid {
+  padding-top: 4.75rem;
 }
 
 @media (max-width: 520px) {
   .ux-v11 .timer-card {
-    top: calc(env(safe-area-inset-top, 0px) + 8.95rem) !important;
-    min-height: 4.05rem;
-    padding: .55rem .7rem;
-    grid-template-columns: auto auto 1fr !important;
-    gap: .55rem;
+    top: calc(env(safe-area-inset-top, 0px) + 7.85rem) !important;
+    width: min(100vw - .75rem, 980px) !important;
+    min-height: 3.85rem;
+    grid-template-columns: 3.25rem 1fr auto !important;
+    gap: .45rem;
+    padding: .48rem .55rem !important;
+  }
+
+  .ux-v11 .timer-card span {
+    width: 3.25rem;
+    font-size: 1.65rem;
   }
 
   .ux-v11 .timer-card .primary-button {
-    min-height: 2.65rem;
-    width: 100%;
+    min-width: 5.9rem;
+    min-height: 2.55rem;
+    padding-inline: .7rem;
+  }
+
+  .ux-v11 .dashboard-grid {
+    padding-top: 4.55rem;
   }
 }
