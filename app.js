@@ -1,6 +1,12 @@
 (() => {
   const STORE_KEY = "flos-fitness:v4";
-  const today = () => new Date().toISOString().slice(0, 10);
+  const today = () => {
+    const date = new Date();
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  };
   const quotes = [
     "Comfort never made history.",
     "Get up bro, it's time to show them your prime.",
@@ -71,5 +77,5 @@
   function exportJson() { const blob = new Blob([JSON.stringify(state, null, 2)], { type: "application/json" }); const url = URL.createObjectURL(blob); const link = document.createElement("a"); link.href = url; link.download = `flos-fitness-${today()}.json`; link.click(); URL.revokeObjectURL(url); }
   async function importJson(event) { const file = event.target.files?.[0]; if (!file) return; try { const imported = JSON.parse(await file.text()); if (!Array.isArray(imported.logs) || !imported.progression || !imported.draft) throw new Error("Ungültiges Backup." ); Object.assign(state, imported); saveState(); render(); } catch (error) { alert(`Import fehlgeschlagen: ${error.message}`); } finally { event.target.value = ""; } }
   function resetData() { if (!confirm("Alle lokalen Daten zurücksetzen?")) return; localStorage.removeItem(STORE_KEY); location.reload(); }
-  function registerServiceWorker() { if ("serviceWorker" in navigator) { navigator.serviceWorker.register("service-worker.js?v=4").catch((error) => console.warn("Service Worker konnte nicht registriert werden.", error)); } }
+  function registerServiceWorker() { if ("serviceWorker" in navigator) { navigator.serviceWorker.register("service-worker.js?v=13").catch((error) => console.warn("Service Worker konnte nicht registriert werden.", error)); } }
 })();
