@@ -13,12 +13,7 @@
     'Heute wird geliefert.'
   ];
 
-  const imagePaths = [
-    './1.jpeg',
-    './2.jpeg',
-    './3.jpeg',
-    './4.jpeg'
-  ];
+  const imagePaths = ['./1.jpeg', './2.jpeg', './3.jpeg', './4.jpeg'];
 
   const visualFallbacks = [
     'linear-gradient(180deg, rgba(0,0,0,.08), rgba(0,0,0,.62)), radial-gradient(circle at 50% 18%, #7dd3fc, #1e293b 48%, #050505 78%)',
@@ -27,7 +22,17 @@
     'linear-gradient(180deg, rgba(0,0,0,.08), rgba(0,0,0,.72)), radial-gradient(circle at 60% 35%, #f97316, #7f1d1d 44%, #050505 78%)'
   ];
 
-  const index = Math.floor(Math.random() * messages.length);
+  function localToday() {
+    const date = new Date();
+    return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+  }
+
+  function stableDailyIndex() {
+    const key = localToday().replaceAll('-', '');
+    return Number(key) % messages.length;
+  }
+
+  const index = stableDailyIndex();
   const fallback = visualFallbacks[index % visualFallbacks.length];
   const path = imagePaths[index % imagePaths.length];
   const imageCss = `linear-gradient(180deg, rgba(0,0,0,.08), rgba(0,0,0,.62)), url('${path}')`;
@@ -41,6 +46,7 @@
   }
 
   const probe = new Image();
+  probe.decoding = 'async';
   probe.onload = () => applyVisual(imageCss);
   probe.onerror = () => applyVisual(fallback);
   probe.src = path;
@@ -65,20 +71,21 @@
     startButton.onclick = (event) => {
       event.preventDefault();
       event.stopPropagation();
+      localStorage.setItem('flos-fitness-motivation-seen-v13', localToday());
       closeModal();
     };
   }
 
   if (modal) {
     modal.addEventListener('click', (event) => {
-      if (event.target === modal) closeModal();
+      if (event.target === modal) {
+        localStorage.setItem('flos-fitness-motivation-seen-v13', localToday());
+        closeModal();
+      }
     });
   }
 
-  const seenKey = 'flos-fitness-motivation-seen-v7';
-  const today = new Date().toISOString().slice(0, 10);
-  if (sessionStorage.getItem(seenKey) !== today) {
-    sessionStorage.setItem(seenKey, today);
-    openModal();
-  }
+  const seenKey = 'flos-fitness-motivation-seen-v13';
+  if (localStorage.getItem(seenKey) !== localToday()) openModal();
+  else closeModal();
 })();
