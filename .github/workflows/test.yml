@@ -1,0 +1,18 @@
+name: Fitness regression tests
+on:
+  push:
+    branches: [main, 'fix/**']
+  pull_request:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check JavaScript syntax
+        run: |
+          for file in *.js; do node --check "$file"; done
+      - name: Regression tests
+        run: node --test tests/*.test.cjs
